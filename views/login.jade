@@ -1,0 +1,14 @@
+extends layout
+block content
+  include left.jade
+  .row.right.col-lg-6
+    form.form-inline
+      label(for="user1") 用户名:
+      input.user.form-control#user1(type='text',placeholder="user")  
+    br
+    form.form-inline
+      label(for="password1") 密 码：
+      input.form-control.password#password1(type='password',placeholder='至少六位')
+    br
+    form
+      input(type="submit",value="登录")
