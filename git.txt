@@ -1,0 +1,5 @@
+git add .
+git commit -m'explain'
+git log / git log -p
+git mv readme.txt readme //文件改名
+git reset HEAD readme //撤销对readme文件的暂存
