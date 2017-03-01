@@ -1,0 +1,10 @@
+git add .
+git commit -m'explain'
+git log / git log -p
+git mv readme.txt readme //文件改名
+git reset HEAD readme //撤销对readme文件的暂存
+gir remote add origin url
+git remote 查看远程仓库的名字 -v 可以显示地址
+git remote rename pb paul
+git remote rm origin
+git pull origin  master

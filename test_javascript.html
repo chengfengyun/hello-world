@@ -1,0 +1,511 @@
+<!DOCTYPE>
+<html>
+
+<head>
+    <title>learn javascript</title>
+    <script src="./bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="./bower_components/dist/css/bootstrap.min.css" />
+</head>
+<style>
+    div {
+        border: 1px solid red;
+    }
+</style>
+
+<body>
+    <input type="text" id="myText" value="input text">
+    <script>
+        //每一个对象独有proto标签
+        function foo() {}
+        foo.prototype.z = 3; //对象属性
+        var obj = new foo(); //通过new 构建的obj对象的原型会指向构造器的prototype属性,也就是foo.prototype, @@但是用var创建的对象的原型链会指向Object.prototype
+        obj.x = 1;
+        obj.y = 2;
+        //FIXME:
+        obj.z = 5;
+        document.write('obj.__proto__ --->foo.prototype  foo.__proto__ ---> Object.prototype' + "<br>");
+        document.write("<br>");
+        document.write(foo.__proto__)
+        document.write(obj.__proto__ == foo.prototype); //true
+        document.write("<br>");
+        document.write(foo.__proto__ == Object.prototype); //false
+        document.write(obj.z); //5
+        document.write("<br>");
+        document.write(foo.prototype.z); //3
+        document.write("<br>");
+        delete obj.z //delete只能删除obj对象上的属性，不能删除foo.z
+        document.write(obj.z); //3
+        document.write("<br>");
+        document.writeln(typeof obj.toString); //function
+        document.write("<br>");
+        document.write('z' in obj); //true
+        document.write("<br>");
+        document.write(obj.hasOwnProperty('z')); //false z是对象的原型链上的
+        document.write("<br>");
+        document.write(Object.prototype.__proto);
+        //当我们访问对象的某一个属性的时候，如果这个对象没有，那么他就会通过原型链向上去找，直到最终找到Object，然后找到null。 
+
+        document.write("<br>");
+        document.write("<br>");
+        var obj = Object.create({
+            x: 1
+        });
+        document.write(obj.x); //1
+        document.write("<br>");
+        document.write(obj.hasOwnProperty('x')); //false
+
+        //属性读取
+        var obj = {
+            x1: 1,
+            x2: 2,
+            x3: 3
+        };
+        document.write("<br>");
+        document.write(obj.x1);
+        var i = 1;
+        for (; i <= 3; i++) {
+            document.write("<br>");
+            document.write(obj['x' + i]);
+        }
+        //属性删除
+        document.write("<br>");
+        delete obj.x1;
+        document.write(obj.x1); //undefined
+        document.write("<br>");
+        document.write('x1' in obj); //false
+        document.write("<br>");
+        document.write('toString' in obj); //true 隐式继承自Object
+        document.write("<br>");
+        document.write('x2' in obj); //true
+        //默认的enumrable:true
+        Object.defineProperty(obj, 'x4', {
+            enumerable: false,
+            value: 4
+        });
+        document.write(obj.propertyIsEnumerable('x3')); //true
+        document.write("<br>");
+        document.write(obj.propertyIsEnumerable('x4')); //false
+        document.write("<br>");
+        document.write(obj.x4); //4
+        document.write("<br>");
+
+        var man = {
+            name: 'lili',
+            get age() {
+                return new Date().getFullYear() - 1988;
+            },
+            set age(val) {
+                document.write('can not set the val ' + val);
+            }
+        }
+        document.write(man.age); //29
+        man.age = 100; //没有设置成功,将返回can not set the val 100
+        document.write("<br>" + man.age); //still 29
+
+        // val = +val; //这样可以将var转化成数字类型 + 号的作用
+
+        function foo() {
+            Object.defineProperty(foo.prototype, 'z', {
+                get: function() {
+                    return 1;
+                }
+            });
+        }
+        var obj = new foo();
+        document.write(obj.z + "   "); //1
+        obj.z = 10;
+        document.write(obj.z + "   "); //1
+        Object.defineProperty(obj, 'z', {
+            value: 100,
+            configurable: true
+        });
+        document.write(obj.z + "  "); //100
+        delete obj.z;
+        document.write(obj.z + "   "); //1
+        document.write("<br>");
+
+        var o = {};
+        Object.defineProperty(o, 'x', {
+            value: 1
+        });
+        var obj = Object.create(o); //writable:false 默认
+        document.write(obj.x + "   ");
+        obj.x = 2; //obj自身没有x属性，而使用obj.x=2无法改变原型上的值，所以obj.x仍为1
+        document.write(obj.x)
+
+        Object.defineProperty(obj, 'x', {
+            value: 100,
+            writable: true
+        });
+        obj.x = 3;
+        document.write("<br>");
+        document.write(obj.x); //3
+        document.write("<br>")
+
+        function add(a, b) {
+            document.write(a + b);
+        }
+
+        function sub(a, b) {
+            document.write(a - b);
+        }
+
+        //语法：call([thisObj[,arg1[, arg2[, [,.argN]]]]])　
+
+        // 参数 thisObj 可选项。 将被用作当前对象的对象。 arg1, arg2, , argN 可选项。 将被传递方法参数序列
+        //call 方法可以用来代替另一个对象调用一个方法。call 方法可将一个函数的对象上下文从初始的上下文改变为由 thisObj 指定的新对象
+        add.call(sub, 3, 1); //4
+        add(3, 1);
+
+        //
+        function Obj() {
+            this.value = "对象！";
+        }
+        var value = "global 变量";
+
+        function Fun1() {
+            document.write(this.value + "-----");
+        }
+        document.write("<br>")
+        window.Fun1(); //global 变量
+        Fun1.call(window); //global 变量
+        Fun1.call(document.getElementById('myText')); //input text
+        Fun1.call(new Obj()); //对象！
+        window.Fun1(); //global 变量
+
+        var func = new function() {
+            this.a = "func"
+        }
+        var myfunc = function(x) {
+                var a = "myfunc";
+                document.write("<br>");
+                document.write(this.a);
+                document.write(x);
+            }
+            //先调用func函数，用this.a=”func”替换myfunc中的this.a ; 然后将”var”传递给方法myfunc的参数x可见分别弹出了func和var
+        myfunc.call(func, "var"); //func var
+
+        // 继承的演示
+        function base() {
+            this.member = " dnnsun_Member";
+            this.method = function() {
+                document.write(this.member);
+            }
+        }
+
+        function extend() {
+            base.call(this); //this-->base
+            document.write(member + "<BR>");
+            document.write(this.member == member);
+            document.write(this.method);
+        }
+        extend();
+
+        var Class = {
+            create: function() {
+                return function() {
+                    this.initialize.apply(this, arguments);
+                }
+            }
+        }
+        var vehicle = Class.create();
+        vehicle.prototype = {
+            initialize: function(type) {
+                this.type = type;
+            },
+            showSelf: function() {
+                document.write("this vehicle is " + this.type);
+            }
+        }
+        var moto = new vehicle("Moto");
+        moto.showSelf();
+        document.write("<br>");
+        //实现继承
+        function Animal(name) {
+            this.name = name;
+            this.showName = function() {
+                document.write(this.name);
+            }
+        }
+
+        function Cat(name) {
+            Animal.call(this, name);
+        }
+        var cat = new Cat('Black Cat');
+        cat.showName();
+
+        // var obj = {
+        //     x: 1
+        // };
+        // document.write(Object.isExtensible(obj)); //true
+        // Object.preventExtensions(obj);
+        // document.write(Object.getOwnPropertyDescriptor(obj, 'x'));
+        // //类似的函数有  
+        // Object.seal(obj);
+        // Object.freeze(obj);
+        //序列化
+
+        var obj = {
+            x: 1,
+            y: true,
+            nullval: null
+        };
+        //将对象转化成json格式
+        // var json_obj = JSON.stringify(obj).toString;
+        //将json格式的数据转化成obj
+        // var obj = JSON.parse({
+        //     "x": 1
+        // });
+        document.write("<br>")
+            // document.write(obj.x == 1);
+
+        //数组的创建
+        var arr = [1, 2, 3, 4, 5]; // == var arr = new Array(length)
+        document.write(arr.length);
+        arr.push(6); //在数组的尾部添加元素 pop--尾部移出
+        document.write(arr.length);
+        arr.unshift(0); //shift-- 头部移出
+        document.write(arr[0]);
+        for (i in arr) {
+            document.write(i + "\n");
+        }
+        /*     
+        Array.prototype.join
+                        .reverse 
+                        .sort
+concat()	连接两个或更多的数组，并返回结果。
+
+every()	检测数值元素的每个元素是否都符合条件。
+
+filter()	检测数值元素，并返回符合条件所有元素的数组。
+
+indexOf()	搜索数组中的元素，并返回它所在的位置。
+
+join()	把数组的所有元素放入一个字符串。
+
+lastIndexOf()	返回一个指定的字符串值最后出现的位置，在一个字符串中的指定位置从后向前搜索。 
+*/
+        //数组对象的原型是Array.prototype
+        //对象的原型是Object.prototype
+        document.write("<br>");
+        var arr = [1, 2, 3, 4, 5];
+        document.write(arr.join('_') + "<br>");
+        document.write(arr.join());
+        document.write("<br>");
+        // for (i in arr) {
+        //     document.write(arr.join('_'));
+        arr.forEach(function(item) {
+                document.write(item + "<br>");
+            })
+            // }
+        document.write("<br>");
+        var s = new Set();
+
+        s.add("scale");
+        s.add(10);
+        s.add("5");
+
+        s.forEach(function(item, sameItem, s) {
+            document.write("Size of the set object is: " + s.size + "<br />");
+            document.write("Deleting item: " + item + "<br />");
+            s.delete(sameItem);
+        });
+
+        var func1 = function(callback) {
+            //do something.
+            document.write("do something");
+            (callback && typeof(callback) === "function") && callback();
+        }
+        var func2 = function() {};
+        func1(func2);
+        document.write("<br>");
+        var clientData = {
+            id: 094545,
+            fullName: "Not Set",
+            // setUserName is a method on the clientData object
+            setUserName: function(firstName, lastName) {
+                // this refers to the fullName property in this object
+                this.fullName = firstName + " " + lastName;
+            }
+        }
+
+        function getUserInput(firstName, lastName, callback) {
+            // Do other stuff to validate firstName/lastName here
+            // Now save the name
+            // FIXME: callback.apply(callbackobj, [firstName, lastName]);
+            callback(firstName, lastName);
+        }
+
+        getUserInput("Barack", "Obama", clientData.setUserName);
+
+        document.write(clientData.fullName + "<br>"); // Not Set
+
+        // The fullName property was initialized on the window object
+        document.write(window.fullName + "<br>"); // Barack Obama
+
+        // 对比
+        function getUserInput(firstName, lastName, callback, callbackobj) {
+            // Do other stuff to validate firstName/lastName here
+
+            // Now save the name
+            callback.apply(callbackobj, [firstName, lastName]);
+            callback(firstName, lastName);
+        }
+
+        getUserInput("Barack", "Obama", clientData.setUserName, clientData);
+
+        document.write(clientData.fullName + "<br>"); // Not Set
+
+        // The fullName property was initialized on the window object
+        document.write(window.fullName + "<br>"); // Barack Obama
+
+        // Define the callback function.
+        function ShowResults(value, index, ar) {
+            document.write("value: " + value);
+            document.write(" index: " + index);
+            document.write("<br />");
+            document.write(ar);
+        }
+
+        // Create an array.
+        var letters = ['ab', 'cd', 'ef'];
+
+        // Call the ShowResults callback function for each
+        // array element.
+        document.write("<br>");
+        letters.forEach(ShowResults);
+        var arr = [1, 2, 3, 4, 5, 6];
+        document.write(arr.concat([4, 5, [6, 7, 8]])); //[1,2,3,4,5,[6,7,8]]
+        document.write(arr.slice(1, -1)); //slice(start,stop) -1表示倒数第一位
+        document.write("<br>");
+        document.write(arr.indexOf(5)); //4
+        document.write("<br>");
+
+        var newarr = arr.filter(function(val, index) {
+            return val > 3 === 0 || index > 3;
+        })
+        document.write(newarr); //[5,6]
+        //every and some
+        document.write(arr.every(function(val) {
+            return val < 3;
+        })); //false
+        document.write(arr.some(function(val) {
+            return val === 3;
+        })); //true
+
+        //function
+        // this arguments 作用域  调用 创建
+
+
+        //函数声明和变量的声明会被前置
+        document.write("<br>");
+        document.write(add1(1, 2));
+        // document.write(add2(1, 2)); //error
+        document.write(num);
+        document.write("<br>");
+        var num = 1;
+
+        //函数声明
+        function add1(arg1, arg2) {
+            return arg1 + arg2;
+        }
+        //函数表达式
+        var add2 = function(arg1, arg2) {
+            return arg1 + arg2;
+        };
+        //立即执行的函数表达式
+        var arg = 100;
+        !(function() {
+            document.write(arg);
+        })(arg);
+        document.write("<br>");
+        //函数构造器Function
+        var fun = new Function('a', 'b', 'document.write(a+b)')
+        fun(1, 2);
+
+        //this
+        //this.a = window.a
+        document.write(this === window); //true
+        document.write("<br>");
+        var pro = 100;
+        var obj = {
+            pro: 1,
+            fun: function() {
+                return this.pro;
+            }
+        };
+        document.write(obj.fun()); //1
+        var o = {
+            f: function() {
+                return this.a + this.b;
+            }
+        };
+        var obj = Object.create(o);
+        document.write(obj.__proto__ == o.prototype); //false
+        obj.a = 1;
+        obj.b = 2;
+        document.write("<br>");
+        document.write(obj.f()); //3
+        function c2() {
+            this.a = 1;
+            return {
+                a: 2
+            };
+        }
+        var obj = new c2(); // 因为返回了一个新的对象{a:2}
+        document.write(obj.a); //2
+
+        function f() {
+            return this.a;
+        }
+        var obj = {
+            a: 111
+        };
+        document.write(f.call(obj));
+
+        function bar() {
+            return Object.prototype.toString.call(this);
+        }
+        document.write("[object Number]" == bar.call(1)); //true
+
+        //bind
+        this.num = 9;
+        var module = {
+            num: 81,
+            getNum: function() {
+                document.write(this.num);
+            }
+        };
+
+        module.getNum(); // 81 ,this->module
+
+        var getNum = module.getNum;
+        getNum(); // 9, this->window or global
+
+        var boundGetNum = getNum.bind(module);
+        boundGetNum(); // 81,this->module
+        document.write("<br>");
+
+        var a = 1000;
+
+        function f() {
+            return this.a;
+        }
+        var obj = {
+            a: 1
+        };
+        var g = f.bind({
+            a: 1
+        }); //bind使得this指向obj
+        document.write(g());
+        document.write("<br>");
+
+        function fun(x, y, z) {
+            return arguments[0];
+        }
+        document.write(fun(10, 2, 3));
+    </script>
+</body>
+
+</html>

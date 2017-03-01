@@ -1,0 +1,28 @@
+extends layout
+block content
+  include left.jade
+  .row.right.col-lg-6
+    form.form-horizontal(method="post")
+      .msg.col-lg-offset-2.text-center #{errors} 
+      .form-group
+        label.col-lg-2.text-right(for="user1") 用户名:
+        .col-lg-10
+          input.user.form-control(type='text',placeholder="用户名",name="name",)  
+      br
+      .form-group
+        label.col-lg-2.text-right(for="1") 密码:
+        .col-lg-10
+          input.password.form-control(type='password',placeholder="密码",name="password",)    
+      br
+      .form-group
+        label.col-lg-2.text-right(for="1") 确认密码:
+        .col-lg-10
+          input.password.form-control(type='password',placeholder="确认密码",name="password_re",)     
+      br
+      .form-group
+        label.col-lg-2.text-right(for="1") 邮箱:
+        .col-lg-10
+          input.email.form-control(type='email',placeholder="ace@ef.com",name="email",)    
+      br
+      .col-lg-10.col-lg-offset-2
+        input(type="submit",value="注册")

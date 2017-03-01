@@ -1,0 +1,39 @@
+body {
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #00B7FF;
+}
+
+.title {
+    padding-top: 20px;
+    font-weight: bold;
+    font-size: 32px;
+    border-bottom: 1px dotted grey;
+}
+
+.left {
+    height: 500px;
+}
+
+.menu li {
+    list-style: none;
+    padding: 10px;
+}
+
+.menu li a:hover {
+    color: red;
+}
+
+.right-head {
+    padding-left: 36px;
+    font-weight: bold;
+}
+
+.msg {
+    color: red;
+    height: 40px;
+    font-size: 16px;
+    line-height: 40px;
+}
